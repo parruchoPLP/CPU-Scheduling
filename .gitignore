@@ -11,9 +11,6 @@ __pycache__/
 # Environment variables
 .env
 
-# Static files
-/static/
-
 # Virtual environment
 venv/
 

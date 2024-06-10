@@ -1,0 +1,88 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #FF92C9;
+    margin: 0;
+    padding: 0;
+}
+
+h1 {
+    color: #CD015C;
+    text-align: center;
+    margin-top: 30px;
+}
+
+form {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 80%;
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+label {
+    display: inline-block;
+    width: 120px;
+    font-weight: bold;
+    color: #CC035C;
+    margin: 10px;
+}
+
+input[type="number"],
+input[type="text"],
+select {
+    padding: 8px;
+    border-radius: 12px;
+    border: 1px solid #cccccc;
+    margin: 10px 0;
+    width: calc(100% - 140px);
+}
+
+input[type="number"]:focus,
+input[type="text"]:focus,
+select:focus {
+    outline: none;
+    border-color: #ff80ab;
+    box-shadow: 0 0 5px rgba(255, 128, 171, 0.5);
+}
+
+button {
+    background-color: #CE005A;
+    color: #FFF3FE;
+    border: none;
+    border-radius: 12px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #ff33cc;
+}
+
+#tasks {
+    margin-bottom: 20px;
+}
+
+#tasks div {
+    border-bottom: 1px solid #dddddd;
+    padding-bottom: 10px;
+}
+
+#tasks div:last-child {
+    border-bottom: none;
+}
+
+@media screen and (max-width: 768px) {
+    label {
+        width: 100%;
+        display: block;
+    }
+
+    input[type="number"],
+    input[type="text"],
+    select {
+        width: 100%;
+    }
+}
