@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request
 app = Flask(__name__)
 
 class algo_util:
@@ -53,14 +53,14 @@ class Task:
 
     def __str__(self) -> str:
         return f"""ID: {self.id}
-Arrival Time: {self.arrival_time}
-CPU Burst: {self.cpu_burst}
-CPU Burst Needed: {self.cpu_burst_needed}
-Waiting Time: {self.waiting_time}
-Turnaround Time: {self.turnaround_time}
-Time Executed: {self.time_executed}
-Time Shifted: {self.shift}
-"""
+                Arrival Time: {self.arrival_time}
+                CPU Burst: {self.cpu_burst}
+                CPU Burst Needed: {self.cpu_burst_needed}
+                Waiting Time: {self.waiting_time}
+                Turnaround Time: {self.turnaround_time}
+                Time Executed: {self.time_executed}
+                Time Shifted: {self.shift}
+                """
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -90,22 +90,18 @@ class algo_printer:
                 current_char = char
                 current_char_count = 1
 
-        # Append the last character and time
         if current_char:
             final_string += current_char
             current_time += current_char_count
             time_stamps.append(current_time)
 
-        # Start building the HTML for the Gantt chart
         table_html = '<table class="table-auto mx-auto">\n<tr>\n'
         
-        # Loop through the final_string to create table cells
         for char in final_string:
             table_html += f'<td class="w-10 h-9 p-4 border border-pink-500 bg-pink-100 text-pink-700 text-xl font-semibold align-middle">{char}</td>\n'
         
         table_html += '</tr>\n</table>\n'
         
-        # Generate the time labels below the Gantt chart
         table_html += '<div class="absolute w-full top-full mt-1 flex justify-center space-x-2">\n'
         for time in time_stamps:
             table_html += f'<div class="w-10 text-center text-pink-700 font-semibold">{time}</div>\n'
@@ -113,73 +109,21 @@ class algo_printer:
         
         return table_html
 
-    def gant_printer(self, gant_string):
-        final_string = ""
-        str_list = [char for char in gant_string]
-        current_char = None
-        current_char_count = 0
-
-        for char in str_list:
-            if current_char == char:
-                current_char_count += 1
-            else:
-                if current_char:
-                    final_string += "|"
-                    for x in range(current_char_count):
-                        if x == current_char_count // 2:
-                            if current_char == "-":
-                                final_string += "@"
-                            else:
-                                final_string += current_char
-                        else:
-                            if current_char == "-":
-                                final_string += "@"
-                            else:
-                                final_string += "-"
-                    current_char_count = 0  # Reset count for the new character
-
-                current_char = char
-                current_char_count = 1
-
-        # Append the remaining characters after the loop ends
-        if current_char:
-            final_string += "|"
-            for x in range(current_char_count):
-                if x == current_char_count // 2:
-                    final_string += current_char
-                else:
-                    if current_char == "-":
-                        final_string += " "
-                    else:
-                        final_string += "-"
-
-        final_string += "|"
-        print(final_string)
-        return final_string
-
     def turnaround_printer(self, task_list: list[Task]):
         turnaround_list = []
-        turnaround_str = "Turnaround Time:\n"
         for task in task_list:
             turnaround_list.append(task.turnaround_time)
-            turnaround_str += f"TA {task.id.lower()} = {task.turnaround_time}ms\n"
 
-        turnaround_str += f"Average TA: {self.util.avg(turnaround_list)}ms"
         ave_ta = f"{self.util.avg(turnaround_list)} ms"
-        print(turnaround_str)
 
         return ave_ta
 
     def waiting_time_printer(self, task_list: list[Task]):
         waiting_time = []
-        waiting_time_str = "Waiting Time:\n"
         for task in task_list:
             waiting_time.append(task.waiting_time)
-            waiting_time_str += f"WT {task.id.lower()} = {task.waiting_time}ms\n"
 
-        waiting_time_str += f"Average WT: {self.util.avg(waiting_time)}ms"
         ave_wt = f"{self.util.avg(waiting_time)} ms"
-        print(waiting_time_str)
 
         return ave_wt
         
@@ -256,7 +200,6 @@ class Algorithm:
 
             counter += 1  # Increment counter regardless of tasks
 
-        self.printer.gant_printer(gant_string)
         ave_ta = self.printer.turnaround_printer(task_list)
         ave_wt = self.printer.waiting_time_printer(task_list)
         self.revert_cpu_burst(task_list)
@@ -306,12 +249,7 @@ class Algorithm:
                     current_task = None
 
             counter += 1
-            print(counter)
-            print([task.id for task in copy_task_list])
-            print([task.id for task in queue])
-            print([task.id for task in finished_tasks])
 
-        self.printer.gant_printer(gant_string)
         ave_ta = self.printer.turnaround_printer(task_list)
         ave_wt = self.printer.waiting_time_printer(task_list)
         self.revert_cpu_burst(task_list)
