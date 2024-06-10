@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CPU Scheduling Algorithms</title>
+    <link rel="stylesheet" href="/static/dist/output.css">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-pink-200 font-sans">
+    <img src="/static/img/headerppg (1).png" alt="Header Image" class="w-auto mx-auto mt-4">
+    <div class="max-w-3xl mx-auto p-6 bg-white rounded-3xl shadow-2xl mb-8">
+        {% if task_list is not defined %}
+        <h1 class="text-2xl font-bold text-pink-700 text-center mb-6">CPU Scheduling Algorithms</h1>
+        <form method="POST">
+            <div class="mb-4">
+                <label for="algorithm" class="block text-pink-600 font-semibold text-xl mb-2">Choose an Algorithm:</label>
+                <div class="relative">
+                    <select id="algorithm" name="algorithm" required class="block appearance-none w-full bg-white border border-pink-500 font-semibold text-pink-600 py-2 px-3 pr-8 rounded-lg leading-tight focus:outline-none focus:ring-2 focus:ring-pink-500">
+                        <option value="fcfs">First Come First Serve, FCFS</option>
+                        <option value="spf">Shortest Process First, SPF</option>
+                        <option value="srtf">Shortest Remaining Time First, SRTF</option>
+                    </select>
+                </div>
+            </div>
+            
+            
+            <div class="mb-4">
+                <label for="task_count" class="block text-pink-600 font-semibold text-xl mb-2">Number of tasks:</label>
+                <input type="number" id="task_count" name="task_count" min="1" max="10" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+            </div>
+            <div id="tasks" class="flex flex-wrap"></div>
+            <button type="submit" class="w-full bg-pink-600 text-white py-2 rounded-lg font-bold hover:bg-pink-700 transition duration-300">Submit</button>
+        </form>
+        <script>
+            document.getElementById('task_count').addEventListener('input', function() {
+                const taskCount = this.value;
+                const tasksDiv = document.getElementById('tasks');
+                tasksDiv.innerHTML = '';
+                for (let i = 0; i < taskCount; i++) {
+                    tasksDiv.innerHTML += `
+                        <div class="w-full mb-4 flex flex-wrap">
+                            <div class="w-full md:w-1/3 px-1 mb-2 md:mb-0">
+                                <label for="id_${i}" class="block text-pink-600 font-semibold mb-1">Task ID:</label>
+                                <input type="text" id="id_${i}" name="id_${i}" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            </div>
+                            <div class="w-full md:w-1/3 px-1 mb-2 md:mb-0">
+                                <label for="arrival_time_${i}" class="block text-pink-600 font-semibold mb-1">Arrival Time:</label>
+                                <input type="number" id="arrival_time_${i}" name="arrival_time_${i}" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            </div>
+                            <div class="w-full md:w-1/3 px-1">
+                                <label for="cpu_burst_${i}" class="block text-pink-600 font-semibold mb-1">CPU Burst:</label>
+                                <input type="number" id="cpu_burst_${i}" name="cpu_burst_${i}" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500">
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        </script>
+        {% else %}
+        <h2 class="text-xl font-bold text-pink-700 mb-4 text-center">Gantt Chart for {{ algo }}</h2>
+        <div class="relative w-full mb-11">
+            {{ gant_chart|safe }}
+        </div>
+    <div class="relative w-full mt-12">
+        <table class="w-full overflow-hidden">
+            <thead>
+                <tr>
+                    <th class="text-center text-lg font-bold px-4 py-2 text-pink-700 border border-pink-500 bg-pink-100">Task ID</th>
+                    <th class="text-center text-lg font-bold px-4 py-2 text-pink-700 border border-pink-500 bg-pink-100">Arrival Time</th>
+                    <th class="text-center text-lg font-bold px-4 py-2 text-pink-700 border border-pink-500 bg-pink-100">CPU Burst</th>
+                    <th class="text-center text-lg font-bold px-4 py-2 text-pink-700 border border-pink-500 bg-pink-100">Turnaround Time</th>
+                    <th class="text-center text-lg font-bold px-4 py-2 text-pink-700 border border-pink-500 bg-pink-100">Waiting Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in task_list %}
+                <tr>
+                    <td class="border border-pink-500 p-4 text-pink-700 font-semibold text-left text-lg">{{ task.id }}</td>
+                    <td class="border border-pink-500 p-4 text-pink-700 font-semibold text-left text-lg">{{ task.arrival_time }}</td>
+                    <td class="border border-pink-500 p-4 text-pink-700 font-semibold text-left text-lg">{{ task.cpu_burst }} ms</td>
+                    <td class="border border-pink-500 p-4 text-pink-700 font-semibold text-left text-lg">{{ task.turnaround_time }} ms</td>
+                    <td class="border border-pink-500 p-4 text-pink-700 font-semibold text-left text-lg">{{ task.waiting_time }} ms</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td class="border border-pink-500 p-4 text-pink-700 text-right text-lg font-bold bg-pink-200" colspan="3">Average</td>
+                    <td class="border border-pink-500 p-4 text-pink-700 font-semibold text-left text-lg">{{ ave_ta }}</td>
+                    <td class="border border-pink-500 p-4 text-pink-700 font-semibold text-left text-lg">{{ ave_wt }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+        <a href="{{ url_for('index') }}" class="block text-center bg-pink-600 text-white py-2 rounded-lg hover:bg-pink-700 transition duration-300 mt-6">Back</a>
+        {% endif %}
+    </div>
+</body>
+</html>
