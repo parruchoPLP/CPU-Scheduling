@@ -18,7 +18,8 @@ class algo_util:
         num = 0
         for i in lst:
             num += i
-        return num / len(lst) if lst else 0
+        result = num / len(lst) if lst else 0
+        return round(result, 4)
 
 
 class Task:
